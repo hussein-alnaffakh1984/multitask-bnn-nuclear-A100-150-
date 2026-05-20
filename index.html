@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Task BNN — Nuclear Structure A=100–150</title>
+  <meta name="description" content="Bayesian neural network ensemble for joint prediction of 6 nuclear observables in medium-mass nuclei">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Plotly for charts -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">MT-BNN</span>
+      <span class="brand-divider"></span>
+      <span class="brand-title">Nuclear Structure Predictions</span>
+    </div>
+    <nav class="primary-nav">
+      <a href="#overview" class="nav-link active">Overview</a>
+      <a href="#predict" class="nav-link">Predict</a>
+      <a href="#chart" class="nav-link">Chart</a>
+      <a href="#sn-chain" class="nav-link">Sn Chain</a>
+      <a href="#validation" class="nav-link">Validation</a>
+      <a href="#data" class="nav-link">Data</a>
+      <a href="#about" class="nav-link">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================
+     SECTION 1: OVERVIEW (HERO)
+     ============================================================ -->
+<section id="overview" class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Multi-Task Bayesian Neural Network</div>
+    <h1 class="hero-title">Joint Prediction of Fourteen Nuclear Observables in Medium-Mass Nuclei</h1>
+    <p class="hero-lede">
+      A Bayesian neural network ensemble that jointly predicts mass excess,
+      two-neutron separation energy, first 2⁺ and 4⁺ excitation energies,
+      the R(4/2) ratio, and reduced E2 transition probability for 651 nuclei
+      with calibrated uncertainty estimates.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">651</div>
+        <div class="stat-label">nuclei<br>40 ≤ Z ≤ 60, 50 ≤ N ≤ 90</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">14</div>
+        <div class="stat-label">observables<br>jointly predicted</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5×</div>
+        <div class="stat-label">ensemble<br>BNNs trained</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">+29%</div>
+        <div class="stat-label">E(2⁺) gain<br>vs single-task</div>
+      </div>
+    </div>
+
+    <div class="hero-metrics">
+      <h3 class="section-eyebrow">Test-Set Performance (Fourteen Observables)</h3>
+      <div class="metrics-grid" id="metrics-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2: PREDICTION TOOL
+     ============================================================ -->
+<section id="predict" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Interactive Tool</div>
+      <h2 class="section-title">Query the BNN Ensemble</h2>
+      <p class="section-lede">
+        Enter a proton number Z and neutron number N to retrieve the BNN ensemble's
+        prediction for all fourteen observables, with calibrated uncertainty estimates derived from
+        500 posterior samples (5 BNNs × 100 samples each).
+      </p>
+    </div>
+
+    <div class="predict-tool">
+      <div class="predict-controls">
+        <div class="input-group">
+          <label for="z-input">Proton number (Z)</label>
+          <input type="number" id="z-input" min="40" max="60" value="50">
+          <small>Range: 40–60</small>
+        </div>
+        <div class="input-group">
+          <label for="n-input">Neutron number (N)</label>
+          <input type="number" id="n-input" min="50" max="90" value="66">
+          <small>Range: 50–90</small>
+        </div>
+        <button id="predict-btn" class="btn-primary">Predict</button>
+      </div>
+
+      <div id="predict-results" class="predict-results">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3: NUCLEAR CHART
+     ============================================================ -->
+<section id="chart" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Visualization</div>
+      <h2 class="section-title">Predictions Across the Chart of Nuclides</h2>
+      <p class="section-lede">
+        Interactive heatmap of the BNN predictions across the (N, Z) plane.
+        Toggle between the fourteen observables and between predicted values, predictive
+        uncertainty, or the experimental data.
+      </p>
+    </div>
+
+    <div class="chart-controls">
+      <label class="chart-label">Observable:</label>
+      <select id="chart-target" class="select">
+        <option value="m">Mass excess</option>
+        <option value="ba">BE/A</option>
+        <option value="s2n">S(2n)</option>
+        <option value="s2p">S(2p)</option>
+        <option value="sn">S(n)</option>
+        <option value="sp">S(p)</option>
+        <option value="qa">Q(α)</option>
+        <option value="qb">Q(β−)</option>
+        <option value="e2" selected>E(2⁺)</option>
+        <option value="be2">B(E2)↑</option>
+        <option value="b2">β₂</option>
+        <option value="tau">τ</option>
+        <option value="e4">E(4⁺)</option>
+        <option value="r42">R(4/2)</option>
+      </select>
+
+      <label class="chart-label">Display:</label>
+      <select id="chart-mode" class="select">
+        <option value="pred" selected>Predicted value</option>
+        <option value="unc">Uncertainty (σ)</option>
+        <option value="exp">Experimental value</option>
+      </select>
+    </div>
+
+    <div id="nuclear-chart" class="chart-container"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4: TIN CHAIN
+     ============================================================ -->
+<section id="sn-chain" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Case Study</div>
+      <h2 class="section-title">Tin Isotopic Chain (Z = 50)</h2>
+      <p class="section-lede">
+        The tin chain is the centerpiece of this study. The famous B(E2) plateau
+        between A = 110 and 124 is reproduced by the BNN within one standard
+        deviation. Beyond A = 132 the uncertainty band broadens, reflecting
+        the absence of training data in the neutron-rich region.
+      </p>
+    </div>
+
+    <div class="chart-controls">
+      <label class="chart-label">Observable:</label>
+      <select id="sn-target" class="select">
+        <option value="m">Mass excess</option>
+        <option value="ba">BE/A</option>
+        <option value="s2n">S(2n)</option>
+        <option value="s2p">S(2p)</option>
+        <option value="sn">S(n)</option>
+        <option value="sp">S(p)</option>
+        <option value="qa">Q(α)</option>
+        <option value="qb">Q(β−)</option>
+        <option value="e2">E(2⁺)</option>
+        <option value="be2" selected>B(E2)↑</option>
+        <option value="b2">β₂</option>
+        <option value="tau">τ</option>
+        <option value="e4">E(4⁺)</option>
+        <option value="r42">R(4/2)</option>
+      </select>
+    </div>
+
+    <div id="sn-chart" class="chart-container"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5: VALIDATION (10 reference nuclei)
+     ============================================================ -->
+<section id="validation" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Quality Assurance</div>
+      <h2 class="section-title">Validation on 10 Reference Nuclei</h2>
+      <p class="section-lede">
+        BNN predictions tested against ten well-measured reference nuclei from across
+        the studied region. Deviations are reported in standard deviations (σ).
+        Coverage at 2σ reaches 100% for mass excess, S(2n), E(2⁺), E(4⁺), and B(E2).
+        The famous ¹³²Sn doubly-magic outlier is correctly flagged with widened uncertainty.
+      </p>
+    </div>
+
+    <div id="validation-table" class="data-table-wrapper">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7: DATA TABLE
+     ============================================================ -->
+<section id="data" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Open Data</div>
+      <h2 class="section-title">Browse All 651 Predictions</h2>
+      <p class="section-lede">
+        Search and filter the complete prediction table. All columns include
+        ensemble mean ± standard deviation. Empty cells indicate the observable
+        is not experimentally measured for that nucleus.
+      </p>
+    </div>
+
+    <div class="table-controls">
+      <input type="text" id="filter-input" class="filter-input" placeholder="Filter by Z, N, A, or element symbol (e.g., 50, Sn, 116Sn)">
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div id="data-table" class="data-table-wrapper">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8: ABOUT
+     ============================================================ -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Scientific Background</div>
+      <h2 class="section-title">About this Work</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>Methodology</h3>
+        <p>
+          We developed a multi-task Bayesian neural network ensemble that jointly
+          predicts fourteen nuclear observables. The architecture combines a deterministic
+          shared trunk (64→32 neurons, ReLU, dropout 0.1) with fourteen task-specific
+          Bayesian heads (16-neuron Bayesian dense + Bayesian linear projection).
+          Variational inference uses mean-field Gaussian guides via Pyro 1.9.
+          Five BNNs (seeds 42, 123, 456, 789, 1024) are trained for 2000 epochs each
+          on a Tesla T4 GPU and combined into a deep ensemble.
+        </p>
+      </div>
+
+      <div class="about-card">
+        <h3>Data Sources</h3>
+        <ul class="about-list">
+          <li><strong>AME2020</strong> [Wang et al. 2021] — mass excess and S(2n) for 651 nuclei</li>
+          <li><strong>Pritychenko 2016</strong> [Pritychenko et al.] — B(E2; 0⁺→2⁺) and E(2⁺) for 134 even-even nuclei</li>
+          <li><strong>NUDAT3</strong> [NNDC, BNL] — first 4⁺ excitation energies for 141 even-even nuclei</li>
+          <li>R(4/2) computed directly from E(4⁺)/E(2⁺)</li>
+        </ul>
+      </div>
+
+      <div class="about-card">
+        <h3>Fourteen Predicted Observables</h3>
+        <ul class="about-list" id="observables-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+      <div class="about-card">
+        <h3>Author</h3>
+        <p>
+          <strong>M. M. Hussein Ali Hussein Al-Naffakh</strong><br>
+          Department of Physics, Faculty of Science<br>
+          Al-Kafeel University, Najaf 54001, Iraq
+        </p>
+        <p style="margin-top: 1rem;">
+          <a href="https://github.com/hussein-alnaffakh1984" class="link" target="_blank" rel="noopener">GitHub profile →</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="citation-box">
+      <h3>Cite this work</h3>
+      <pre class="citation">M. M. Hussein Ali Hussein Al-Naffakh.
+"Multi-Task Bayesian Neural Network Ensemble for Joint Prediction
+ of Nuclear Mass, Separation Energies, and Quadrupole Collectivity
+ in Medium-Mass Nuclei."
+[Manuscript in preparation], 2026.</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>MT-BNN Nuclear Structure</strong>
+        <span>A=100–150 region predictions</span>
+      </div>
+      <div class="footer-links">
+        <a href="#overview">Overview</a>
+        <a href="#predict">Predict</a>
+        <a href="#data">Data</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="footer-meta">
+        <small>Open data · MIT licensed · Built with PyTorch + Pyro</small>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
