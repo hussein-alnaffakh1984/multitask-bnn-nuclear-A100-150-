@@ -1,0 +1,24 @@
+# Core dependencies for Multi-Task BNN Nuclear Predictions
+# Tested on Python 3.10+, Tesla T4 GPU (CUDA 12.8)
+
+# Deep learning
+torch>=2.0.0
+pyro-ppl>=1.9.0
+
+# Data science
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+scipy>=1.10
+
+# Visualization (for figure generation; not required for inference)
+matplotlib>=3.7
+plotly>=5.15
+
+# Web scraping (only needed to re-fetch NUDAT3 data)
+beautifulsoup4>=4.12
+lxml>=4.9
+
+# Notebook (optional)
+jupyter>=1.0
+ipykernel>=6.25
