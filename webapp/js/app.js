@@ -1,5 +1,12 @@
 // ================================================================
-// Multi-Task BNN Webapp — App Logic (v2: 6 outputs)
+// Multi-Task BNN Webapp — App Logic (v3.1: 14 outputs + R(4/2) fix)
+// ================================================================
+// v3.1 changes:
+//   - R(4/2) computed at display time from E(4+)/E(2+) of the same
+//     model output (with Gaussian error propagation) to enforce
+//     cross-task consistency. Cases where the explicit BNN R(4/2)
+//     prediction disagrees with the ratio of its own E4/E2 are
+//     flagged with a "low-confidence" badge.
 // ================================================================
 
 // Color palette (synced with style.css)
@@ -151,10 +158,48 @@ function initPredictTool() {
           <tbody>
     `;
 
+    // === Cross-task consistency helper: ratio with error propagation ===
+    // R = a/b  =>  σ_R = |R| · sqrt((σ_a/a)² + (σ_b/b)²)
+    const ratioWithUnc = (a, sa, b, sb) => {
+      if (a == null || b == null || b === 0) return [null, null];
+      const r = a / b;
+      const rel_a = (sa != null && a !== 0) ? (sa / a) : 0;
+      const rel_b = (sb != null && b !== 0) ? (sb / b) : 0;
+      return [r, Math.abs(r) * Math.sqrt(rel_a * rel_a + rel_b * rel_b)];
+    };
+
     TARGETS.forEach(t => {
       const exp = nucleus[t.E];
-      const pred = nucleus[t.P];
-      const unc = nucleus[t.U];
+      let pred = nucleus[t.P];
+      let unc  = nucleus[t.U];
+
+      // FIX for R(4/2): the BNN predicts E(2+), E(4+), and R(4/2) as
+      // three independent tasks, which can disagree (validation Test 5
+      // showed mean |R_explicit − R_implicit| = 0.31).
+      // We recompute R(4/2) from the SAME-model E(4+)/E(2+) so what the
+      // user sees is internally consistent. We flag the cases where the
+      // explicit BNN R(4/2) disagrees with the ratio of its own E4/E2.
+      let consistencyNote = '';
+      if (t.key === 'r42') {
+        const e2_pred = nucleus.e2P;
+        const e2_unc  = nucleus.e2U;
+        const e4_pred = nucleus.e4P;
+        const e4_unc  = nucleus.e4U;
+        if (e2_pred != null && e4_pred != null && e2_pred > 50) {
+          const explicit = pred;
+          const [r_imp, sigma_r] = ratioWithUnc(e4_pred, e4_unc, e2_pred, e2_unc);
+          pred = r_imp;
+          unc  = sigma_r;
+          if (explicit != null && Math.abs(explicit - r_imp) > 0.5) {
+            consistencyNote =
+              ' <span class="badge badge-gold" style="font-size:0.7em;" ' +
+              'title="Cross-task inconsistency: explicit BNN R(4/2)=' +
+              explicit.toFixed(2) + ' vs E(4+)/E(2+)=' + r_imp.toFixed(2) +
+              '. Showing the physically consistent ratio.">⚠ low-confidence</span>';
+          }
+        }
+      }
+
       const dec = (t.key === 'r42' || t.key === 'b2' ? 3 : (t.key === 'be2' ? 4 : (t.key === 'ba' ? 2 : 0)));
       const dev = computeDeviation(exp, pred, unc);
 
@@ -169,7 +214,7 @@ function initPredictTool() {
 
       html += `
         <tr>
-          <td><strong>${t.name}</strong> ${t.unit ? `<small>(${t.unit})</small>` : ''}</td>
+          <td><strong>${t.name}</strong> ${t.unit ? `<small>(${t.unit})</small>` : ''}${consistencyNote}</td>
           <td>${fmtExp(exp, dec)}</td>
           <td><span class="pred-value">${fmtPred(pred, unc, dec)}</span></td>
           <td><span class="dev ${devClass}">${devText}</span></td>
@@ -570,11 +615,11 @@ function initDataTable() {
         <tr>
           <td>${n.Z}</td><td>${n.N}</td><td>${n.A}</td><td><strong>${n.EL}</strong></td>
           <td>${fmtPred(n.mP, n.mU, 0)}</td>
-          <td>${fmtPred(n.sP, n.sU, 0)}</td>
-          <td>${fmtPred(n.eP, n.eU, 0)}</td>
-          <td>${fmtPred(n.fP, n.fU, 0)}</td>
-          <td>${fmtPred(n.rP, n.rU, 2)}</td>
-          <td>${fmtPred(n.bP, n.bU, 3)}</td>
+          <td>${fmtPred(n.s2nP, n.s2nU, 0)}</td>
+          <td>${fmtPred(n.e2P, n.e2U, 0)}</td>
+          <td>${fmtPred(n.e4P, n.e4U, 0)}</td>
+          <td>${fmtPred(n.r42P, n.r42U, 2)}</td>
+          <td>${fmtPred(n.be2P, n.be2U, 3)}</td>
         </tr>
       `;
     });
