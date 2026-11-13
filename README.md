@@ -120,13 +120,20 @@ multitask-bnn-nuclear-A100-150-/
 
 ## 📑 Citation
 
+If you use this code or its results, please cite the published paper:
+
+> Al-Naffakh, H.A.H., Obaid, S.M., Majeed, F.A., & Khattak, U.F. (2026). Multi-Task Bayesian Neural Network Ensemble for Joint Prediction of Fourteen Nuclear Observables in Medium-Mass Nuclei. *Journal of Physical Studies*, 30(3), 3201. https://doi.org/10.30970/jps.30.3201
+
 ```bibtex
-@article{Alnaffakh2026MTBNN14,
-  title   = {Multi-Task Bayesian Neural Network Ensemble for Joint Prediction
-             of Fourteen Nuclear Observables in Medium-Mass Nuclei},
-  author  = {M. M. Hussein Ali Hussein Al-Naffakh},
-  journal = {[Manuscript in preparation]},
-  year    = {2026}
+@article{AlNaffakh2026MTBNN14,
+  title   = {Multi-Task Bayesian Neural Network Ensemble for Joint Prediction of Fourteen Nuclear Observables in Medium-Mass Nuclei},
+  author  = {Al-Naffakh, Hussein Ali Hussein and Obaid, Sarah M. and Majeed, Fouad A. and Khattak, Umar Farooq},
+  journal = {Journal of Physical Studies},
+  year    = {2026},
+  volume  = {30},
+  number  = {3},
+  pages   = {3201},
+  doi     = {10.30970/jps.30.3201}
 }
 ```
 
