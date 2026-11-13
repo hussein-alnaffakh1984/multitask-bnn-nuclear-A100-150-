@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the published paper below."
+title: "Multi-Task Bayesian Neural Network for Nuclear Structure - 14 Outputs (code)"
+type: software
+authors:
+  - family-names: "Al-Naffakh"
+    given-names: "Hussein Ali Hussein"
+    orcid: "https://orcid.org/0000-0002-4775-8818"
+  - family-names: "Obaid"
+    given-names: "Sarah M."
+  - family-names: "Majeed"
+    given-names: "Fouad A."
+  - family-names: "Khattak"
+    given-names: "Umar Farooq"
+repository-code: "https://github.com/hussein-alnaffakh1984/multitask-bnn-nuclear-A100-150-"
+preferred-citation:
+  type: article
+  title: "Multi-Task Bayesian Neural Network Ensemble for Joint Prediction of Fourteen Nuclear Observables in Medium-Mass Nuclei"
+  authors:
+    - family-names: "Al-Naffakh"
+      given-names: "Hussein Ali Hussein"
+      orcid: "https://orcid.org/0000-0002-4775-8818"
+    - family-names: "Obaid"
+      given-names: "Sarah M."
+    - family-names: "Majeed"
+      given-names: "Fouad A."
+    - family-names: "Khattak"
+      given-names: "Umar Farooq"
+  journal: "Journal of Physical Studies"
+  year: 2026
+  volume: 30
+  issue: 3
+  number: "3201"
+  doi: "10.30970/jps.30.3201"
