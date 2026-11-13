@@ -1,5 +1,6 @@
 # Multi-Task Bayesian Neural Network for Nuclear Structure — 14 Outputs
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24208764.svg)](https://doi.org/10.5281/zenodo.24208764)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.10-orange.svg)](https://pytorch.org/)
