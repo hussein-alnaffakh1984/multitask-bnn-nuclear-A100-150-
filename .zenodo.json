@@ -1,0 +1,29 @@
+{
+  "title": "Multi-Task Bayesian Neural Network for Nuclear Structure - 14 Outputs (code)",
+  "upload_type": "software",
+  "access_right": "open",
+  "description": "<p>Source code and reproducibility materials accompanying the article: Multi-Task Bayesian Neural Network Ensemble for Joint Prediction of Fourteen Nuclear Observables in Medium-Mass Nuclei. <em>Journal of Physical Studies</em>, 2026. https://doi.org/10.30970/jps.30.3201</p><p>If you use this software, please cite the article.</p>",
+  "creators": [
+    {
+      "name": "Al-Naffakh, Hussein Ali Hussein",
+      "affiliation": "University of Alkafeel, Najaf, Iraq",
+      "orcid": "0000-0002-4775-8818"
+    },
+    {
+      "name": "Obaid, Sarah M."
+    },
+    {
+      "name": "Majeed, Fouad A."
+    },
+    {
+      "name": "Khattak, Umar Farooq"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://doi.org/10.30970/jps.30.3201",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article"
+    }
+  ]
+}
